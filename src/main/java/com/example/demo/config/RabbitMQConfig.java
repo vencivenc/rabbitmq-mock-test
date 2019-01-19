@@ -31,19 +31,17 @@ public class RabbitMQConfig {
     TopicExchange exchange() {
         return new TopicExchange(topicExchangeName);
     }
+    
+    @Bean
+    Queue queue() {
+        return new Queue(queueName, true);
+    }
 
     @Bean
-    public List<Declarable> topicBindings(TopicExchange exchange) {
-        Queue queue = new Queue(queueName, true);
-
-        TopicExchange topicExchange = new TopicExchange(topicExchangeName);
-
-        return Arrays.asList(
-                queue,
-                topicExchange,
-                BindingBuilder
-                        .bind(queue)
-                        .to(exchange).with(routing));
+    public Binding topicBindings(TopicExchange exchange, Queue queue) {
+        return BindingBuilder
+                .bind(queue)
+                .to(exchange).with(routing);
     }
 
     @Bean(name = "rabbitTemplate")
